@@ -1,0 +1,58 @@
+---
+title: "gis_part1"
+output: html_document
+---
+
+
+```{r}
+library(tmap)
+library(tmaptools)
+library(readr)
+library(sp)
+library(sf)
+library(RColorBrewer)
+library(rgdal)
+library(rgeos)
+library(classInt)
+library(maptools)
+library(methods)
+LondonData <- read_csv("https://files.datapress.com/london/dataset/ward-profiles-and-atlas/2015-09-24T14:21:24/ward-profiles-excel-version.csv")
+LondonBoroughs1 <- read_shape("London boroughs data/LondonBoroughs.shp", as.sf = TRUE)
+Environmentfoot <- read_csv("environmental-footprint-data.csv")
+LondonEnv <- Environmentfoot[1:33,]
+LondonEnvData <- LondonData[,c(1,2,3,4,63,64)]
+LondonEnvData <- data.frame(LondonEnvData)
+NewLondonEnvData <- LondonEnvData[grep("^E09",LondonEnvData[,3]),]
+NewLondonEnvData <- NewLondonEnvData[2:34,]
+names(NewLondonEnvData)[2] <- c("Code")
+EnvLondonData <- merge(NewLondonEnvData,LondonEnv,by='Code')
+NewLondonEnvData <- NewLondonEnvData[,1:6]
+library(plotly)
+names(EnvLondonData)[9] <- c("Carbon.Footprint2004")
+names(EnvLondonData)[10] <- c("GHG.Footprint2004")
+EnvLondonData <- data.frame(EnvLondonData)
+BoroughDataMap <- append_data(LondonBoroughs1,EnvLondonData, key.shp="ons_label", key.data = "Code", ignore.duplicates = TRUE)
+tmap_mode("plot")
+qtm(BoroughDataMap, fill="GHG.Footprint2004")
+```
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

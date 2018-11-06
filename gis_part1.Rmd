@@ -3,7 +3,7 @@ title: "gis_part1"
 output: html_document
 ---
 
-
+[GHG Footprint 2004](gisarc_a1.jpg)
 ```{r}
 library(tmap)
 library(tmaptools)
